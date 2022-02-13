@@ -16,7 +16,7 @@ const Canvas = () => {
   const lineWidth = useStore((state) => state.lineWidth );
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
-  const [isDrawing, setIsDrawing] = useState(false);
+  const [isDrawing, setIsDrawing] = useState<Boolean>(false);
 
   useEffect(() => {
     if (!canvasRef.current) {

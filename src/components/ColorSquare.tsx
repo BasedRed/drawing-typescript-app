@@ -2,7 +2,7 @@ import React from "react";
 
 import useStore from "./Store";
 
-const ColorSquare = ({color}: any) => {
+const ColorSquare: React.FC<{color:string}> = ({color}) => {
 
     const zustandChange = useStore((state) => state.changeColor);
 
