@@ -12,11 +12,16 @@ import useStore from "./Store";
 // }
 
 const Canvas = () => {
+  //Store variables import
   const drawingColor = useStore((state) => state.color);
   const lineWidth = useStore((state) => state.lineWidth );
+  const squareDrawingMode = useStore((state) => state.squareDrawingMode);
+
+  //This components variables
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
   const [isDrawing, setIsDrawing] = useState<Boolean>(false);
+  const [startingPoint, setStartingPoint] = useState({x: 0, y:0})
 
   useEffect(() => {
     if (!canvasRef.current) {
@@ -50,14 +55,38 @@ const Canvas = () => {
 
   const startDrawing = ({ nativeEvent }: any) => {
     const { offsetX, offsetY } = nativeEvent;
-    contextRef.current?.beginPath();
-    contextRef.current?.moveTo(offsetX, offsetY);
-    setIsDrawing(true);
+
+    //If we are drawing a path
+    if (!squareDrawingMode) {
+
+      contextRef.current?.beginPath();
+      contextRef.current?.moveTo(offsetX, offsetY);
+      setIsDrawing(true);
+
+      //If we are drawing a square
+    } else {
+
+     if (!contextRef.current) {
+    return;
+      }
+       contextRef.current.fillStyle = drawingColor;
+
+      setStartingPoint((prevState) => ({...prevState, x: offsetX, y: offsetY}))
+      console.log(startingPoint);
+
+    }
   };
 
-  const finishDrawing = () => {
-    contextRef.current?.closePath();
-    setIsDrawing(false);
+ 
+
+  const finishDrawing = ({nativeEvent}: any) => {
+    if (!squareDrawingMode) {
+      contextRef.current?.closePath();
+      setIsDrawing(false);
+    } else {
+        const { offsetX, offsetY } = nativeEvent;
+        contextRef.current?.fillRect(offsetX, offsetY, startingPoint.x - offsetX, startingPoint.y - offsetY);
+    }
   };
 
   const draw = ({ nativeEvent }: any) => {
